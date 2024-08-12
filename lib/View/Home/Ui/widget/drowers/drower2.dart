@@ -2,14 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:project_api2/View/addpost/Ui/page/addPosts.dart';
-import 'package:project_api2/View/logout/Ui/page/logout.dart';
 import 'package:project_api2/core/routing/router.dart';
 import 'package:project_api2/core/theming/colors/color.dart';
 import 'package:project_api2/core/theming/size/size.dart';
 import 'package:project_api2/core/theming/fonts/fonts.dart';
 
 class ProfileIcon extends StatelessWidget {
-  const ProfileIcon({Key? key}) : super(key: key);
+  final void Function()? onclick;
+  const ProfileIcon({Key? key,required this.onclick}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -71,11 +71,7 @@ class ProfileIcon extends StatelessWidget {
             ),
           ),
           const Spacer(flex: 4),
-          GestureDetector(
-            onTap: () {
-              context.navigateTo(Logout());
-            },
-            child: ListTile(
+         ListTile(
               leading: const Icon(
                 Icons.logout,
                 color: colors.primary,
@@ -85,9 +81,9 @@ class ProfileIcon extends StatelessWidget {
                 'LogOut',
                 style: styling.maintitle.copyWith(fontSize: 20),
               ),
-              onTap: () {},
+              onTap: onclick,
             ),
-          ),
+          
         ],
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:project_api2/View/Home/Ui/page/Home.dart';
@@ -8,7 +9,9 @@ import 'package:project_api2/View/Sign_Up/Ui/widget/textfiled/textfiled.dart';
 import 'package:project_api2/View/Sign_in/Ui/widgets/actions/forgetpass.dart';
 import 'package:project_api2/View/Sign_in/Ui/widgets/header/pageheader.dart';
 import 'package:project_api2/View/Sign_in/cubit/cubit/signin_cubit.dart';
+import 'package:project_api2/core/api/dio_consumer.dart';
 import 'package:project_api2/core/routing/router.dart';
+import 'package:project_api2/repositories/auth_repository.dart';
 
 class SignIn extends StatelessWidget {
   const SignIn({super.key});
@@ -16,10 +19,23 @@ class SignIn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => SigninCubit(),
+      create: (context) => SigninCubit(AuthRepo(api: DioConsumer(dio: Dio()))),
       child: BlocConsumer<SigninCubit, SigninState>(
         listener: (context, state) {
-          // TODO: implement listener
+         if (state is SignInSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("succes"),
+              ),
+            );
+            context.navigateTo(Home());
+          } else if (state is SignInfailer) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.errorMessage),
+              ),
+            );
+          }
         },
         builder: (context, state) {
           final cubit = BlocProvider.of<SigninCubit>(context);
@@ -50,11 +66,13 @@ class SignIn extends StatelessWidget {
                   const SizedBox(height: 10),
                   ForgetPasswordWidget(),
                   const SizedBox(height: 15),
-                  CustomFormButton(
+                state is SignInloading
+                      ? CircularProgressIndicator()
+                      :  CustomFormButton(
                     innerText: 'Log in',
                     onPressed: () {
-                      //cubit.sign_up();
-                      context.navigateTo(Home());
+                      cubit.signin();
+                      // context.navigateTo(Home());
                     },
                   ),
                   const SizedBox(height: 18),

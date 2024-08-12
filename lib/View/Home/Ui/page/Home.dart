@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +8,9 @@ import 'package:project_api2/View/Home/Ui/widget/drowers/drower2.dart';
 import 'package:project_api2/View/Home/Ui/widget/footer.dart';
 import 'package:project_api2/View/Home/Ui/widget/green/greenSpace.dart';
 import 'package:project_api2/View/Home/cubit/cubit/home_cubit.dart';
+import 'package:project_api2/View/Sign_in/Ui/page/Signin.dart';
 import 'package:project_api2/View/post/Ui/page/post.dart';
+import 'package:project_api2/core/api/dio_consumer.dart';
 import 'package:project_api2/core/routing/router.dart';
 import 'package:project_api2/core/theming/colors/color.dart';
 import 'package:project_api2/core/theming/size/size.dart';
@@ -15,6 +18,7 @@ import 'package:project_api2/View/Home/Ui/widget/headerwidget.dart';
 import 'package:project_api2/View/Home/Ui/widget/buttonSelect_team/list_view.dart';
 import 'package:project_api2/View/Home/Ui/widget/postwidget.dart';
 import 'package:project_api2/View/Home/Ui/widget/buttonSelect_team/selsectitems.dart';
+import 'package:project_api2/repositories/auth_repository.dart';
 
 class Home extends StatefulWidget {
   Home({super.key});
@@ -27,9 +31,24 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeCubit(),
+      create: (context) => HomeCubit(AuthRepo(api: DioConsumer(dio: Dio()))),
       child: BlocConsumer<HomeCubit, HomeState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+           if (state is LogoutSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("succes"),
+              ),
+            );
+            context.navigateTo(SignIn());
+          } else if (state is LogoutFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.errMessage),
+              ),
+            );
+          }
+        },
         builder: (context, state) {
           final cubit = BlocProvider.of<HomeCubit>(context);
           return AdvancedDrawer(
@@ -53,7 +72,13 @@ class _HomeState extends State<Home> {
             childDecoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(16)),
             ),
-            drawer: state is HomeMenuDrawerOpen ? MenuScreen() : ProfileIcon(),
+            drawer: state is HomeMenuDrawerOpen
+                ? MenuScreen()
+                : ProfileIcon(
+                    onclick: () {
+                      cubit.logout();
+                    },
+                  ),
             child: Scaffold(
               appBar: AppBarWidget(
                 onMenuTap: cubit.openMenuDrawer,
