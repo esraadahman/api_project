@@ -7,6 +7,7 @@ import 'package:project_api2/cache/cache_healper.dart';
 import 'package:project_api2/core/api/api_consumer.dart';
 import 'package:project_api2/core/api/endPointes.dart';
 import 'package:project_api2/core/errors/exceptions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepo {
   final ApiConsumer api;
@@ -19,13 +20,17 @@ class AuthRepo {
       final response = await api.post(EndPoint.signin,
           data: {ApiKey.email: email, ApiKey.password: pass}, isFromData: true);
       final user = LoginModel.fromJson(response);
+
+      print(" name  ${user.user.first_name}");
       CacheHelper().saveData(key: ApiKey.token, value: user.token);
       CacheHelper().saveData(key: ApiKey.id, value: user.user.id);
       CacheHelper().saveData(key: ApiKey.email, value: user.user.email);
-      // CacheHelper().saveData(key: ApiKey.first_name, value: user.user.first_name);
-      // CacheHelper()
-      //     .saveData(key: ApiKey.last_name, value: user.user.last_name);
+      CacheHelper()
+          .saveData(key: ApiKey.first_name, value: user.user.first_name);
+      CacheHelper().saveData(key: ApiKey.last_name, value: user.user.last_name);
+      CacheHelper().saveData(key: ApiKey.job_title, value: user.user.job_title);
       CacheHelper().saveData(key: ApiKey.image, value: user.user.image);
+
       return Right(user);
     } on ServerException catch (e) {
       return Left(e.errModel.message);
@@ -42,19 +47,27 @@ class AuthRepo {
   }) async {
     try {
       final response = await api.post(EndPoint.signup, isFromData: true, data: {
-        ApiKey.email: email,
-        ApiKey.password: pass,
         ApiKey.first_name: first_name,
         ApiKey.last_name: last_name,
+        ApiKey.email: email,
+        ApiKey.password: pass,
         ApiKey.password_confirmation: pass_confirm,
         ApiKey.job_title: job_title
 // to send image
         //  ApiKey.image: await uploadImageToAPI(profilePic)
       });
       final user = SignUpModel.fromJson(response);
+      // Save user data using SharedPreferences
+
+    
       CacheHelper().saveData(key: ApiKey.token, value: user.token);
       CacheHelper().saveData(key: ApiKey.id, value: user.user.id);
       CacheHelper().saveData(key: ApiKey.email, value: user.user.email);
+      CacheHelper().saveData(key: ApiKey.last_name, value: user.user.last_name);
+      CacheHelper()
+          .saveData(key: ApiKey.first_name, value: user.user.first_name);
+      CacheHelper().saveData(key: ApiKey.job_title, value: user.user.job_title);
+      //CacheHelper().saveData(key: ApiKey.image, value: user.user.image);
       return Right(user);
     } on ServerException catch (e) {
       return Left(e.errModel.message);
@@ -69,7 +82,9 @@ class AuthRepo {
       CacheHelper().removeData(key: ApiKey.token);
       CacheHelper().removeData(key: ApiKey.id);
       CacheHelper().removeData(key: ApiKey.email);
-        CacheHelper().removeData(key: ApiKey.image);
+      CacheHelper().removeData(key: ApiKey.first_name);
+      CacheHelper().removeData(key: ApiKey.image);
+      CacheHelper().removeData(key: ApiKey.last_name);
       final response2 = LogoutModel.fromJson(response);
 
       return Right(response2);

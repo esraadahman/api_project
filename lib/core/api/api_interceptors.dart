@@ -2,7 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:project_api2/core/api/endPointes.dart';
 import 'package:project_api2/cache/cache_healper.dart';
 
-
 class ApiInterceptor extends Interceptor {
   // send header with request
   @override
@@ -12,15 +11,14 @@ class ApiInterceptor extends Interceptor {
     //     CacheHelper().getData(key: ApiKey.token) != null
     //         ? "${CacheHelper().getData(key: ApiKey.token)}"
     //         : null;
+    options.headers['Content-Type'] = "application/x-www-form-urlencoded";
 
-     final token = CacheHelper().getData(key: ApiKey.token);
+    final token = CacheHelper().getData(key: ApiKey.token);
     if (token != null) {
-    
       options.headers['Authorization'] = "Bearer $token";
     }
     super.onRequest(options, handler);
   }
-  
 
   // 'Authorization': 'Bearer $token',
 }

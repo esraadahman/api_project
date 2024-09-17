@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project_api2/View/Home/Ui/page/Home.dart';
 import 'package:project_api2/View/Sign_Up/Ui/widget/actions/button.dart';
 import 'package:project_api2/View/Sign_Up/Ui/widget/actions/textbottom.dart';
 import 'package:project_api2/View/Sign_Up/Ui/widget/image/image.dart';
@@ -21,7 +22,7 @@ class SignUp extends StatelessWidget {
       create: (context) => SignupCubit(AuthRepo(api: DioConsumer(dio: Dio()))),
       child: BlocConsumer<SignupCubit, SignupState>(
         listener: (context, state) {
-         if (state is SignUpSuccess) {
+          if (state is SignUpSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
@@ -47,7 +48,7 @@ class SignUp extends StatelessWidget {
                       //  PageHeader(),
                       PageHeading(title: "Sign Up"),
                       PickImageWidget(),
-                        const SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       textfiled(
                         labelText: 'First Name',
                         hintText: 'Your first name',
@@ -55,7 +56,7 @@ class SignUp extends StatelessWidget {
                         controller: cubit.signup_first_name,
                       ),
                       const SizedBox(height: 16),
-                        textfiled(
+                      textfiled(
                         labelText: 'Last Name',
                         hintText: 'Your last name',
                         isDense: true,
@@ -100,12 +101,13 @@ class SignUp extends StatelessWidget {
                       ),
 
                       const SizedBox(height: 25),
-                     state is SignUpLoading
+                      state is SignUpLoading
                           ? CircularProgressIndicator()
                           : CustomFormButton(
                               innerText: 'Signup',
                               onPressed: () {
                                 cubit.sign_up();
+                                context.navigateTo(Home());
                               },
                             ),
                       const SizedBox(height: 18),

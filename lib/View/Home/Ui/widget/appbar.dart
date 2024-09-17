@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
+import 'package:project_api2/core/api/endPointes.dart';
 import 'package:project_api2/core/theming/colors/color.dart';
 
 class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
   final void Function()? onMenuTap;
-   final void Function()? onProfileTap;
+  final void Function()? onProfileTap;
+  final String image;
   final AdvancedDrawerController advancedDrawerController;
 
   AppBarWidget({
     super.key,
     required this.onMenuTap,
     required this.advancedDrawerController,
-    required this.onProfileTap,
+    required this.onProfileTap, required this.image,
   });
 
   @override
@@ -49,13 +51,11 @@ class AppBarWidget extends StatelessWidget implements PreferredSizeWidget {
           const Spacer(),
           // Profile Picture on the right
           GestureDetector(
-           onTap: onProfileTap, 
-            child: const CircleAvatar(
+            onTap: onProfileTap,
+            child: CircleAvatar(
               radius: 22,
               backgroundColor: colors.primary,
-              backgroundImage: NetworkImage(
-                'https://img.freepik.com/free-photo/portrait-handsome-serious-man_23-2149022618.jpg?ga=GA1.1.1454705726.1706974768&semt=ais_hybrid',
-              ),
+              backgroundImage: NetworkImage("${EndPoint.imagepath}${image}"),
             ),
           ),
         ],

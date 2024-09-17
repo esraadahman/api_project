@@ -12,6 +12,21 @@ class HomeMenuDrawerOpen extends HomeState {}
 class HomeProfileDrawerOpen extends HomeState {}
 
 
+class GetPostsLoading extends HomeState {}
+
+class GetPostsSuccess extends HomeState {
+  final HomeModel model;
+
+  GetPostsSuccess({required this.model});
+}
+
+class GetPostsFailure extends HomeState {
+  final String errMessage;
+  GetPostsFailure({required this.errMessage});
+}
+
+
+
 
 
 class LogoutLoading extends HomeState {}

@@ -11,6 +11,7 @@ import 'package:project_api2/View/Home/cubit/cubit/home_cubit.dart';
 import 'package:project_api2/View/Sign_in/Ui/page/Signin.dart';
 import 'package:project_api2/View/post/Ui/page/post.dart';
 import 'package:project_api2/core/api/dio_consumer.dart';
+import 'package:project_api2/core/api/endPointes.dart';
 import 'package:project_api2/core/routing/router.dart';
 import 'package:project_api2/core/theming/colors/color.dart';
 import 'package:project_api2/core/theming/size/size.dart';
@@ -19,6 +20,7 @@ import 'package:project_api2/View/Home/Ui/widget/buttonSelect_team/list_view.dar
 import 'package:project_api2/View/Home/Ui/widget/postwidget.dart';
 import 'package:project_api2/View/Home/Ui/widget/buttonSelect_team/selsectitems.dart';
 import 'package:project_api2/repositories/auth_repository.dart';
+import 'package:project_api2/repositories/user_repository.dart';
 
 class Home extends StatefulWidget {
   Home({super.key});
@@ -31,16 +33,18 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => HomeCubit(AuthRepo(api: DioConsumer(dio: Dio()))),
+      create: (context) => HomeCubit(AuthRepo(api: DioConsumer(dio: Dio())),
+          userRepo(api: DioConsumer(dio: Dio())))
+        ..getallPosts()
+        ..getuser_image_name(),
       child: BlocConsumer<HomeCubit, HomeState>(
         listener: (context, state) {
-           if (state is LogoutSuccess) {
+          if (state is LogoutSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
+              const SnackBar(
                 content: Text("succes"),
               ),
             );
-            context.navigateTo(SignIn());
           } else if (state is LogoutFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -51,6 +55,8 @@ class _HomeState extends State<Home> {
         },
         builder: (context, state) {
           final cubit = BlocProvider.of<HomeCubit>(context);
+          //cubit.getname_of_image("/storage/uploads/1723429015.jpg");
+        //  cubit.getuser_image();
           return AdvancedDrawer(
             backdrop: Container(
               width: double.infinity,
@@ -73,23 +79,27 @@ class _HomeState extends State<Home> {
               borderRadius: BorderRadius.all(Radius.circular(16)),
             ),
             drawer: state is HomeMenuDrawerOpen
-                ? MenuScreen()
+                ? const MenuScreen()
                 : ProfileIcon(
                     onclick: () {
                       cubit.logout();
+                      context.navigateTo(SignIn());
                     },
+                    image: cubit.user_image,
+                    name: cubit.user_name,
                   ),
             child: Scaffold(
               appBar: AppBarWidget(
                 onMenuTap: cubit.openMenuDrawer,
                 advancedDrawerController: cubit.advancedDrawerController,
                 onProfileTap: cubit.openProfileDrawer,
+                image: cubit.user_image,
               ),
               body: SafeArea(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      HeaderandSubscribeButtonWidget(),
+                      const HeaderandSubscribeButtonWidget(),
                       size.height(20),
                       GestureDetector(
                         onTap: () {
@@ -98,49 +108,68 @@ class _HomeState extends State<Home> {
                           });
                         },
                         child: cubit.list_view == false
-                            ? SelectContainerWidget()
+                            ? const SelectContainerWidget()
                             : Container(
-                                margin: EdgeInsets.only(left: 45),
+                                margin: const EdgeInsets.only(left: 45),
                                 child: listView(),
                               ),
                       ),
                       size.height(20),
-                      ListView.separated(
-                        shrinkWrap: true,
-                        physics:
-                            const NeverScrollableScrollPhysics(), // Disable ListView scrolling
-                        itemCount: 5,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                              onTap: () {
-                                context.navigateTo(
-                                  SinglePost(
-                                    pathimage_post:
-                                        'assets/images/post-image.png',
-                                    pathimage_user:
-                                        'https://img.freepik.com/free-photo/portrait-handsome-serious-man_23-2149022618.jpg?ga=GA1.1.1454705726.1706974768&semt=ais_hybrid',
-                                    content:
-                                        'This Is My First post to publish here, \n say Hi',
-                                    username: 'By ,Mohamed Khaled',
-                                    date: 'Sep.6,2024',
-                                    title: 'post title',
-                                  ),
-                                );
-                              },
-                              child: PostWidget(
-                                pathimage_post: 'assets/images/post-image.png',
-                                pathimage_user:
-                                    'https://img.freepik.com/free-photo/portrait-handsome-serious-man_23-2149022618.jpg?ga=GA1.1.1454705726.1706974768&semt=ais_hybrid',
-                                content:
-                                    'This Is My First post to publish here, \n say Hi',
-                                username: 'By ,Mohamed Khaled',
-                                date: 'Sep.6,2024',
-                              ));
-                        },
-                        separatorBuilder: (BuildContext context, int index) {
-                          return size.height(30);
-                        },
-                      ),
+                      state is GetPostsLoading
+                          ? const CircularProgressIndicator(
+                              color: colors.primary,
+                            )
+                          : state is GetPostsSuccess
+                              ? ListView.separated(
+                                  shrinkWrap: true,
+                                  physics:
+                                      const NeverScrollableScrollPhysics(), // Disable ListView scrolling
+                                  itemCount: state.model.data.length,
+                                  itemBuilder: (context, index) {
+                                    cubit.getname_of_image(
+                                        state.model.data[index].image_path!);
+
+                                    return GestureDetector(
+                                        onTap: () {
+                                          cubit.getname_of_image(state
+                                              .model.data[index].image_path!);
+
+                                          context.navigateTo(
+                                            SinglePost(
+                                              pathimage_post:
+                                                  "${EndPoint.imagepath}${cubit.filename}",
+                                              pathimage_user:
+                                                  'https://img.freepik.com/free-photo/portrait-handsome-serious-man_23-2149022618.jpg?ga=GA1.1.1454705726.1706974768&semt=ais_hybrid',
+                                              content: state
+                                                  .model.data[index].content,
+                                              username: 'By ,Mohamed Khaled',
+                                              date: cubit.formatDateTime(state
+                                                  .model
+                                                  .data[index]
+                                                  .createdAt!),
+                                              title: 'post title',
+                                            ),
+                                          );
+                                        },
+                                        child: PostWidget(
+                                          pathimage_post:
+                                              //  "http://10.0.2.2/blog-api-project-main/storage/app/public/uploads/1723429015.jpg",
+                                              "${EndPoint.imagepath}${cubit.filename}",
+                                          pathimage_user:
+                                              'https://img.freepik.com/free-photo/portrait-handsome-serious-man_23-2149022618.jpg?ga=GA1.1.1454705726.1706974768&semt=ais_hybrid',
+                                          content:
+                                              state.model.data[index].content,
+                                          username: 'By ,Mohamed Khaled',
+                                          date: cubit.formatDateTime(state
+                                              .model.data[index].createdAt!),
+                                        ));
+                                  },
+                                  separatorBuilder:
+                                      (BuildContext context, int index) {
+                                    return size.height(30);
+                                  },
+                                )
+                              : const Center(child: Text("error")),
                       size.height(50),
                       Container(
                         width: 250,
@@ -165,9 +194,9 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       size.height(50),
-                      GreenRectangleWidget(),
+                      const GreenRectangleWidget(),
                       //! footer
-                      Footer()
+                      const Footer()
                     ],
                   ),
                 ),

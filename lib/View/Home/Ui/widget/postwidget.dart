@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:project_api2/core/theming/fonts/fonts.dart';
 import 'package:project_api2/core/theming/size/size.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,13 @@ class PostWidget extends StatelessWidget {
             width: 339,
             height: 200,
             decoration: BoxDecoration(
-                image: DecorationImage(image: AssetImage(pathimage_post))),
+              //   image: DecorationImage(
+              //   image: FileImage(File(pathimage_post)),
+              //   fit: BoxFit.cover, // Adjust this as needed
+              // ),
+              image: DecorationImage(image: NetworkImage(pathimage_post),
+             fit: BoxFit.cover,
+            ),)
           ),
           size.height(5),
           Text(
@@ -36,14 +43,14 @@ class PostWidget extends StatelessWidget {
           size.height(10),
           Row(
             children: [
-              size.width(50),
+              size.width(25),
               CircleAvatar(
                 radius: 25,
                 backgroundImage: NetworkImage(pathimage_user),
               ),
-              size.width(5),
+              size.width(20),
               Text(username),
-              size.width(10),
+              size.width(25),
               Text(
                 date,
                 style: TextStyle(color: Colors.grey),

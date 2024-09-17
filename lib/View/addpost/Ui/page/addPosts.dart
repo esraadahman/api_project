@@ -102,7 +102,7 @@ class AddPost extends StatelessWidget {
                                 },
                               );
                             },
-                            child: AddPhoto(),
+                            child: AddPhoto(text: "add post Photo",),
                           ),
                     size.height(40),
                     PostButton(

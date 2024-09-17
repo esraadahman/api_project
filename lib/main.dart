@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: 
-       CacheHelper().getData(key: ApiKey.id) ==null? SignIn():Home(),
+       CacheHelper().getData(key: ApiKey.token) ==null? SignIn():Home(),
     //  SignIn()
     //  SignUp(),
   // Home(),

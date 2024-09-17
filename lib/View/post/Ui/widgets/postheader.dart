@@ -17,7 +17,7 @@ class PostHeader extends StatelessWidget {
                       ),
                       size.width(10),
                       Text(username),
-                      size.width(35),
+                      size.width(40),
                       Text(
                         date,
                         style: TextStyle(color: Colors.grey),

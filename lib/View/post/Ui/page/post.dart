@@ -4,6 +4,8 @@ import 'package:project_api2/View/post/Ui/widgets/postdata.dart';
 import 'package:project_api2/View/post/Ui/widgets/post_icon.dart';
 import 'package:project_api2/core/theming/size/size.dart';
 import 'package:project_api2/core/theming/colors/color.dart';
+import 'package:project_api2/core/theming/fonts/fonts.dart';
+
 
 class SinglePost extends StatelessWidget {
   String pathimage_post;
@@ -53,11 +55,12 @@ class SinglePost extends StatelessWidget {
                       date: date,
                     ),
                   ),
-                  //size.height(5),
+                  size.height(5),
                   PostData(
                     pathimage_post: pathimage_post,
                     content: content,
                   ),
+    
 
                   size.height(25),
                   PostIcons(),

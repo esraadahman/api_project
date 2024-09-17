@@ -17,7 +17,7 @@ class MenuScreen extends StatelessWidget {
           ListTile(
             title: Text(
               "Home",
-              style: styling.maintitle.copyWith(fontSize: 30),
+              style: styling.maintitle.copyWith(fontSize: 20),
             ),
             leading:  Icon(Icons.home,color: colors.primary,size: 30,),
           ),
@@ -25,7 +25,7 @@ class MenuScreen extends StatelessWidget {
         ListTile(
             title: Text(
               "Person",
-              style: styling.maintitle.copyWith(fontSize: 30),
+              style: styling.maintitle.copyWith(fontSize: 20),
             ),
             leading: Icon(
               Icons.person,
@@ -37,7 +37,7 @@ class MenuScreen extends StatelessWidget {
             ListTile(
             title: Text(
               "Search",
-              style: styling.maintitle.copyWith(fontSize: 30),
+              style: styling.maintitle.copyWith(fontSize: 20),
             ),
             leading: Icon(
               Icons.search,
@@ -49,7 +49,7 @@ class MenuScreen extends StatelessWidget {
               ListTile(
             title: Text(
               "Setting",
-              style: styling.maintitle.copyWith(fontSize: 30),
+              style: styling.maintitle.copyWith(fontSize: 20),
             ),
             leading: Icon(
               Icons.settings,

@@ -15,7 +15,7 @@ class PostData extends StatelessWidget {
           width: 400,
           height: 300,
           decoration: BoxDecoration(
-              image: DecorationImage(image: AssetImage(pathimage_post))),
+              image: DecorationImage(image:NetworkImage(pathimage_post))),
         ),
         size.height(5),
         Text(
